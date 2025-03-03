@@ -316,7 +316,7 @@ todos = ... 赋值操作触发vue的响应式更新，视图自动渲染，显�
  }
 </script>
 <template>
-	<button @click="removeTodo(todo。id)">
+	<button @click="removeTodo(todo.id)">
         x
     </button>
 </template>
