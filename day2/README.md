@@ -138,7 +138,7 @@ import { ref, onMounted, watch } from 'vue'
 
 ```vue
 <input 
-	v-bind:value=”newTodo" 
+	  v-bind:value="newTodo" 
     v-on:input="value = $event.target.value"
     v-on:keyup.enter="addTodo"
     placeholder="输入待办事项..."/>
