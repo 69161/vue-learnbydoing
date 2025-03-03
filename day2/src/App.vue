@@ -1,10 +1,38 @@
 <script setup>
-import { ref, onMounted, watch } from 'vue'
+import { ref, onMounted, watch, computed } from 'vue'
 
 // 响应式数据
 const todos = ref([])
 const newTodo = ref('')
 
+// filterText 
+const filterText = {
+  all: '全部',
+  completed: '已完成',
+  active: '未完成'
+}
+// 当前过滤条件
+const currentFilter = ref('all')
+// 过滤后的待办事项
+const filteredTodos = computed(() => {
+  switch (currentFilter.value) {
+    case 'active':
+      return todos.value.filter(todo =>!todo.completed)
+    case 'completed':
+      return todos.value.filter(todo => todo.completed)
+    default:
+      return todos.value
+  }
+  // if(currentFilter.value ==='all') {
+  //   return todos.value
+  // } else if(currentFilter.value === 'active') {
+  //   return todos.value.filter(todo => !todo.completed)
+  // } else {
+  //   return todos.value.filter(todo => todo.completed)
+  // }
+  
+})
+  
 // 添加待办事项
 const addTodo = () => {
   if (newTodo.value.trim()) {
@@ -41,10 +69,21 @@ watch(todos, (newVal) => {
       >
       <button @click="addTodo" class="add-btn">添加</button>
     </div>
-    
-    <ul v-if="todos.length" class="todo-list">
+    <!-- 分类过滤 -->
+    <div class="filter">
+      <!-- v-for 遍历数组 -->
+      <span
+        v-for="filter in ['all', 'completed', 'active']"
+        :key="filter"
+        class="filter-item"
+        :class="{ active: currentFilter === filter }"
+        @click="currentFilter = filter"
+      >{{ filterText[filter] }}</span>
+    </div>
+    <!-- 遍历todos 改为filteredTodos -->
+    <ul v-if="filteredTodos.length" class="todo-list">
       <li 
-        v-for="todo in todos"
+        v-for="todo in filteredTodos"
         :key="todo.id"        
         class="todo-item"
       >
@@ -71,6 +110,31 @@ watch(todos, (newVal) => {
 </template>
 
 <style scoped>
+/* 分类过滤 */
+.filter {
+  display: flex;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+
+}
+/* 分类过滤项 */
+.filter-item {
+  flex: auto;
+  border: 1px solid #ccc;
+  cursor: pointer;
+  border-radius: 5px;
+  padding: 0.5rem 0.5rem;
+  user-select: none;
+}
+/* 分类过滤项激活样式 */
+.filter-item.active {
+  background-color: #4CAF50;
+  color: #fff;
+}
+
 /* 添加你的CSS样式 */
 .container { 
   max-width: 600px; 
@@ -106,17 +170,21 @@ watch(todos, (newVal) => {
   height: 50px;
   box-sizing: border-box;
 }
-
+/* 超出范围隐藏滚动条 */
 .todo-list {
   list-style: none; 
   padding: 0; 
   margin: 0; 
+  max-height: 200px;
+  overflow-y: auto;
+}
+.todo-list::-webkit-scrollbar {
+  display: none;
 }
 .todo-item { 
   display: flex; 
   align-items:flex-start; 
   justify-content: space-between;
-  margin-bottom: 1rem; 
   padding: 1rem;
   border-radius: 5px;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
