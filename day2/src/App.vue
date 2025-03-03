@@ -8,7 +8,7 @@ const newTodo = ref('')
 // 添加待办事项
 const addTodo = () => {
   if (newTodo.value.trim()) {
-    todos.value.push({
+    todos.value.unshift({
       id: Date.now(),
       text: newTodo.value.trim(),
       completed: false
